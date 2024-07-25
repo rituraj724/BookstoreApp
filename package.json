@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "daisyui": "^4.12.10"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1"
   }
 }

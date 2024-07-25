@@ -1,16 +1,40 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Login from './Login';
 import { useForm } from 'react-hook-form';
+import axios from "axios"
 
 function Signup() {
+  const navigate=useNavigate();
+  const location= useLocation()
+  const from =location.state?.from?.pathname || "/";
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
-  const onSubmit = (data) => console.log(data);
+  const onSubmit =async (data) => {
+    const userInfo ={
+      fullname:data.fullname,
+      email:data.email,
+      password:data.password
+    }
+   await axios.post("http://localhost:4001/user/signup" ,userInfo)
+    .then((res)=>{
+      console.log(res.data);
+      if(res.data){
+        toast.success("Signup Successfull");
+        navigate(from,{replace:true});
+      
+      }
+      localStorage.setItem("Users",JSON.stringify(res.data))
+
+    }).catch((err) => {
+      console.log(err)
+      toast.error("Signup error:"+err);
+    })
+  };
 
   return (
     <>
@@ -27,11 +51,11 @@ function Signup() {
                 <br />
                 <input
                   type='text'
-                  placeholder='Enter your name'
+                  placeholder='Enter your fullname'
                   className='w-80 px-3 border rounded-md outline-none'
-                  {...register("name", { required: true })}
+                  {...register("fullname", { required: true })}
                 />
-                {errors.name && <span>This field is required</span>}
+                {errors.fullname && <span>This field is required</span>}
               </div>
               <div className='mt-4 space-y-2'>
                 <label>Email</label>
